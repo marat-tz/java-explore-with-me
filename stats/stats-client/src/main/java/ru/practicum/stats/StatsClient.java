@@ -38,8 +38,20 @@ public class StatsClient {
                 .queryParam("unique", unique)
                 .toUriString();
 
-        return restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
+        ResponseEntity<List<ViewStatDtoResponse>> response = restTemplate.exchange(uri, HttpMethod.GET,
+                null, new ParameterizedTypeReference<>() {});
+
+        if (response.getStatusCode().value() == 404) {
+            throw new NotFoundException("Ошибка при записи события (метод hit)");
+
+        } else if (response.getStatusCode().value() == 400) {
+            throw new ValidationException("Ошибка при записи события(метод hit)");
+
+        } else if (response.getStatusCode().is5xxServerError()) {
+            throw new InternalErrorException("Ошибка при записи события(метод hit)");
+        }
+
+        return response;
     }
 
     public void hit(EndpointHitDtoRequest dto) {
