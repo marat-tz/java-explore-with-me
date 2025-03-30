@@ -1,22 +1,32 @@
 services:
-  main-service:
-    build: main-service
-    image: main-service
-    container_name: main-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - main-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main_db
-      - SPRING_DATASOURCE_USERNAME=main
-      - SPRING_DATASOURCE_PASSWORD=main
-
-  main-db:
+  stats-db:
     image: postgres:14-alpine
-    container_name: main_db
+    container_name: stats-db
     ports:
-      - "6541:5432"
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=stats
+      - POSTGRES_USER=stats
+      - POSTGRES_DB=stats
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  stats-server:
+    build: stats/stats-server
+    container_name: stats-server
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats-db
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: ewm-db
+    ports:
+      - "5433:5432"
     environment:
       - POSTGRES_PASSWORD=main
       - POSTGRES_USER=main
@@ -27,30 +37,14 @@ services:
       interval: 5s
       retries: 10
 
-  stats-server:
-    build: stats-server
-    image: stats-server
-    container_name: stats-server
+  ewm-service:
+    build: ewm-service
+    container_name: ewm-service
     ports:
-      - "9090:9090"
+      - "8080:8080"
     depends_on:
-      - stats-db
+      - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats_db
-      - SPRING_DATASOURCE_USERNAME=stats
-      - SPRING_DATASOURCE_PASSWORD=stats
-
-  stats-db:
-    image: postgres:14-alpine
-    container_name: stats_db
-    ports:
-      - "6541:5432"
-    environment:
-      - POSTGRES_PASSWORD=stats
-      - POSTGRES_USER=stats
-      - POSTGRES_DB=stats
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main_db
+      - SPRING_DATASOURCE_USERNAME=main
+      - SPRING_DATASOURCE_PASSWORD=main
