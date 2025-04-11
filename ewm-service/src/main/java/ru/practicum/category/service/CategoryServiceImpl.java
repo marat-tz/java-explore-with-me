@@ -10,6 +10,8 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.reposiory.CategoryRepository;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.model.User;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
+    private final EventRepository eventRepository;
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -50,6 +54,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long categoryId) {
+        if (eventRepository.existsByCategoryId(categoryId)) {
+            throw new ConflictException("Попытка удалить категорию с привязанными событиями");
+        }
         categoryRepository.deleteById(categoryId);
     }
 
