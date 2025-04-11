@@ -1,7 +1,8 @@
-package ru.practicum.category;
+package ru.practicum.category.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.service.CategoryService;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping(path = "/admin/categories")
 @RequiredArgsConstructor
@@ -25,13 +26,14 @@ public class AdminCategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto createCategory(@Valid @RequestBody CategoryDto dto) {
+    public CategoryDto createCategory(@Valid @RequestBody NewCategoryDto dto) {
+        log.info("Попытка создать категорию контроллер");
         return categoryService.createCategory(dto);
     }
 
     @PatchMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@RequestBody CategoryDto dto, @PathVariable Long categoryId) {
+    public CategoryDto updateCategory(@RequestBody NewCategoryDto dto, @PathVariable Long categoryId) {
         return categoryService.updateCategory(dto, categoryId);
     }
 

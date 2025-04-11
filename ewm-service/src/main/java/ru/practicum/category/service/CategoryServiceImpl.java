@@ -1,10 +1,12 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.reposiory.CategoryRepository;
@@ -14,6 +16,7 @@ import ru.practicum.user.model.User;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -22,17 +25,21 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public CategoryDto createCategory(CategoryDto dto) {
+    public CategoryDto createCategory(NewCategoryDto dto) {
+        log.info("Попытка создать категорию сервис");
         Category category = categoryRepository.save(categoryMapper.toEntity(dto));
-        return categoryMapper.toDto(category);
+        log.info("Категория создана имя: {}, id: {}", category.getName(), category.getId());
+        CategoryDto result = categoryMapper.toDto(category);
+        log.info("Категория создана dto имя: {}, id: {}", result.getName(), result.getId());
+        return result;
     }
 
     @Override
-    public CategoryDto updateCategory(CategoryDto dto, Long categoryId) {
+    public CategoryDto updateCategory(NewCategoryDto dto, Long categoryId) {
         checkExist(categoryId);
-        dto.setId(categoryId);
-        Category category = categoryRepository.save(categoryMapper.toEntity(dto));
-        return categoryMapper.toDto(category);
+        Category category = new Category(categoryId, dto.getName());
+        Category result = categoryRepository.save(category);
+        return categoryMapper.toDto(result);
     }
 
     @Override

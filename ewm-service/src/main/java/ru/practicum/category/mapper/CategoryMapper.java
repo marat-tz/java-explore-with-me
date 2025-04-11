@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
@@ -17,6 +18,6 @@ public interface CategoryMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
-    Category toEntity(CategoryDto dto);
+    Category toEntity(NewCategoryDto dto);
 
 }
