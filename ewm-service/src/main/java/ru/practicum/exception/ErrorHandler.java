@@ -20,6 +20,9 @@ public class ErrorHandler {
             response = new ErrorResponse("Not found exception", e.getMessage());
             result = new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
+        } else if (e instanceof ConflictException) {
+            response = new ErrorResponse("Conflict exception", e.getMessage());
+            result = new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
         return result;
