@@ -1,6 +1,9 @@
 package ru.practicum.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.model.User;
 
@@ -46,8 +50,11 @@ public class Event {
     LocalDateTime eventDate;
 
     @ManyToOne
+    @JoinColumn(name = "initiator_id")
     User initiator;
 
+    @ManyToOne
+    @JoinColumn(name = "location_id")
     Location location;
 
     Boolean paid;
@@ -58,6 +65,7 @@ public class Event {
 
     Boolean requestModeration;
 
+    @Enumerated(EnumType.STRING)
     State state;
 
     String title;
