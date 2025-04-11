@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
@@ -37,6 +38,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto createUser(UserDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new ConflictException("Пользователь с указанной почтой уже существует");
+        }
+
         User user = userRepository.save(userMapper.toEntity(dto));
         return userMapper.toDto(user);
     }
