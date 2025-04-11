@@ -10,6 +10,7 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.reposiory.CategoryRepository;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.model.User;
 
@@ -26,17 +27,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto createCategory(NewCategoryDto dto) {
-        log.info("Попытка создать категорию сервис");
+        if (categoryRepository.existsByName(dto.getName())) {
+            throw new ConflictException("Имя категории уже существует");
+        }
+
         Category category = categoryRepository.save(categoryMapper.toEntity(dto));
-        log.info("Категория создана имя: {}, id: {}", category.getName(), category.getId());
-        CategoryDto result = categoryMapper.toDto(category);
-        log.info("Категория создана dto имя: {}, id: {}", result.getName(), result.getId());
-        return result;
+        return categoryMapper.toDto(category);
     }
 
     @Override
     public CategoryDto updateCategory(NewCategoryDto dto, Long categoryId) {
         checkExist(categoryId);
+
+        if (categoryRepository.existsByName(dto.getName())) {
+            throw new ConflictException("Имя категории уже существует");
+        }
+
         Category category = new Category(categoryId, dto.getName());
         Category result = categoryRepository.save(category);
         return categoryMapper.toDto(result);

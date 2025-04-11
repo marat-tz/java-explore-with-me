@@ -8,4 +8,6 @@ import ru.practicum.user.model.User;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
+    boolean existsByName(String name);
+
 }
