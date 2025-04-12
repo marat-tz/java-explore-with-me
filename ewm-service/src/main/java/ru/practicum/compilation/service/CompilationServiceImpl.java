@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
+import ru.practicum.compilation.dto.UpdateCompilationDto;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
@@ -14,7 +15,9 @@ import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,6 +48,9 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto createCompilation(NewCompilationDto dto) {
+        if (dto.getEvents() == null) {
+            dto.setEvents(new ArrayList<>());
+        }
         List<Long> eventIds = dto.getEvents();
         List<Event> events = eventRepository.findAllById(eventIds);
         Compilation compilation = compilationRepository.save(compilationMapper.toEntity(dto, events));
@@ -52,9 +58,13 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto updateCompilation(Long compId, NewCompilationDto dto) {
+    public CompilationDto updateCompilation(Long compId, UpdateCompilationDto dto) {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(() ->
                 new NotFoundException("Подборка " + compId + " не найдена"));
+
+        if (dto.getEvents() == null) {
+            dto.setEvents(new ArrayList<>());
+        }
 
         compilation.setPinned(dto.getPinned());
 

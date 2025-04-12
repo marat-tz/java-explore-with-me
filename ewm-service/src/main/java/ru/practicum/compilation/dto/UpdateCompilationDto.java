@@ -1,18 +1,10 @@
 package ru.practicum.compilation.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.dto.EventShortDto;
 
-import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NewCompilationDto {
+public class UpdateCompilationDto {
 
     Long id;
 
@@ -28,7 +20,6 @@ public class NewCompilationDto {
     Boolean pinned = false;
 
     @Size(min = 2, max = 50)
-    @NotBlank
     String title;
 
 }

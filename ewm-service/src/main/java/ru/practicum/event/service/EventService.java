@@ -1,5 +1,6 @@
 package ru.practicum.event.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
@@ -30,7 +31,7 @@ public interface EventService {
                                         Integer from,
                                         Integer size);
 
-    EventFullDto findEventByIdPublic(Long eventId);
+    EventFullDto findEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
 
     EventFullDto createEventPrivate(Long userId, NewEventDto dto);
 

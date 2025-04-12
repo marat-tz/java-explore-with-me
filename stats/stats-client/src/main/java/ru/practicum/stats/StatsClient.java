@@ -10,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.practicum.stats.exception.InternalErrorException;
-import ru.practicum.stats.exception.NotFoundException;
-import ru.practicum.stats.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +25,7 @@ public class StatsClient {
         this.serverUrl = serverUrl;
     }
 
-    public ResponseEntity<List<ViewStatDtoResponse>> findStats(LocalDateTime start, LocalDateTime end,
+    public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
                                                                List<String> uris, Boolean unique) {
         String uri = UriComponentsBuilder.fromHttpUrl(serverUrl)
                 .path("/stats")
@@ -41,17 +38,17 @@ public class StatsClient {
         ResponseEntity<List<ViewStatDtoResponse>> response = restTemplate.exchange(uri, HttpMethod.GET,
                 null, new ParameterizedTypeReference<>() {});
 
-        if (response.getStatusCode().value() == 404) {
-            throw new NotFoundException("Ошибка при записи события (метод hit)");
+//        if (response.getStatusCode().value() == 404) {
+//            throw new NotFoundException("Ошибка при записи события (метод hit)");
+//
+//        } else if (response.getStatusCode().value() == 400) {
+//            throw new ValidationException("Ошибка при записи события(метод hit)");
+//
+//        } else if (response.getStatusCode().is5xxServerError()) {
+//            throw new InternalErrorException("Ошибка при записи события(метод hit)");
+//        }
 
-        } else if (response.getStatusCode().value() == 400) {
-            throw new ValidationException("Ошибка при записи события(метод hit)");
-
-        } else if (response.getStatusCode().is5xxServerError()) {
-            throw new InternalErrorException("Ошибка при записи события(метод hit)");
-        }
-
-        return response;
+        return response.getBody();
     }
 
     public void hit(EndpointHitDtoRequest dto) {
@@ -65,15 +62,15 @@ public class StatsClient {
 
         ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
 
-        if (response.getStatusCode().value() == 404) {
-            throw new NotFoundException("Ошибка при записи события (метод hit)");
-
-        } else if (response.getStatusCode().value() == 400) {
-            throw new ValidationException("Ошибка при записи события(метод hit)");
-
-        } else if (response.getStatusCode().is5xxServerError()) {
-            throw new InternalErrorException("Ошибка при записи события(метод hit)");
-        }
+//        if (response.getStatusCode().value() == 404) {
+//            throw new NotFoundException("Ошибка при записи события (метод hit)");
+//
+//        } else if (response.getStatusCode().value() == 400) {
+//            throw new ValidationException("Ошибка при записи события(метод hit)");
+//
+//        } else if (response.getStatusCode().is5xxServerError()) {
+//            throw new InternalErrorException("Ошибка при записи события(метод hit)");
+//        }
 
     }
 }

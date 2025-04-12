@@ -1,5 +1,6 @@
 package ru.practicum.stats;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ViewStatDtoResponse {
+
+    @NotNull
     String app;
+
     String uri;
+
     Long hits;
+
 }

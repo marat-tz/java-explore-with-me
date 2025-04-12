@@ -20,6 +20,8 @@ public interface EventMapper {
 
     EventShortDto toShortDto(Event event);
 
+    List<EventShortDto> toShortDto(List<Event> events);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "categoryEntity")
     @Mapping(target = "initiator", source = "initiator")

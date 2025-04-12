@@ -36,10 +36,7 @@ public class PrivateRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createUserRequestPrivate(@PathVariable Long userId,
-                                                            @RequestParam(required = false) Long eventId) {
-        if (eventId == null) {
-            throw new ValidationException("Параметр 'eventId' не указан");
-        }
+                                                            @RequestParam Long eventId) {
         return requestService.createUserRequestPrivate(userId, eventId);
     }
 

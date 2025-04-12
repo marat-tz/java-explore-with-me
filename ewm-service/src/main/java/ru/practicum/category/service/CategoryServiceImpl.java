@@ -9,12 +9,10 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
-import ru.practicum.category.reposiory.CategoryRepository;
-import ru.practicum.event.model.Event;
+import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +41,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(NewCategoryDto dto, Long categoryId) {
         checkExist(categoryId);
 
-        if (categoryRepository.existsByName(dto.getName())) {
+        Optional<Category> existingCategory = categoryRepository.findByName(dto.getName());
+        if (existingCategory.isPresent() && !existingCategory.get().getId().equals(categoryId)) {
             throw new ConflictException("Имя категории уже существует");
         }
 

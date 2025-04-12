@@ -1,5 +1,8 @@
 package ru.practicum.event.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,9 +27,9 @@ public class PublicEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventShortDto> findEventsPublic(@RequestParam(required = false) String text,
+    public List<EventShortDto> findEventsPublic(@RequestParam(required = false) @Size(min = 1, max = 7000) String text,
                                                 @RequestParam(required = false) List<Integer> categories,
-                                                @RequestParam(defaultValue = "false") Boolean paid,
+                                                @RequestParam(required = false) Boolean paid,
                                                 @RequestParam(required = false)
                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                     LocalDateTime rangeStart,
@@ -35,7 +38,7 @@ public class PublicEventController {
                                                     LocalDateTime rangeEnd,
                                                 @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                                 @RequestParam(required = false) String sort,
-                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
                                                 @RequestParam(defaultValue = "10") Integer size) {
         log.info("Метод PublicEventController - findEvents");
         return eventService.findEventsPublic(text, categories, paid, rangeStart,
@@ -43,8 +46,8 @@ public class PublicEventController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto findEventByIdPublic(@PathVariable Long eventId) {
-        return eventService.findEventByIdPublic(eventId);
+    public EventFullDto findEventByIdPublic(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
+        return eventService.findEventByIdPublic(eventId, httpServletRequest);
     }
 
 }

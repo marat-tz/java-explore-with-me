@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
+import ru.practicum.compilation.dto.UpdateCompilationDto;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface CompilationService {
 
     CompilationDto createCompilation(NewCompilationDto dto);
 
-    CompilationDto updateCompilation(Long compId, NewCompilationDto dto);
+    CompilationDto updateCompilation(Long compId, UpdateCompilationDto dto);
 
     void deleteCompilation(Long compId);
 
