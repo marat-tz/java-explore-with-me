@@ -7,24 +7,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handlerException(final Exception e) {
-        ErrorResponse response = new ErrorResponse("Unknown exception", e.getMessage());
-        ResponseEntity<ErrorResponse> result = new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
-        if (e instanceof ValidationException) {
-            response = new ErrorResponse("Validation exception", e.getMessage());
-            result = new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handlerValidationException(ValidationException e) {
+        return new ResponseEntity<>(new ErrorResponse("Validation exception", e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 
-        } else if (e instanceof NotFoundException) {
-            response = new ErrorResponse("Not found exception", e.getMessage());
-            result = new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlerNotFoundException(NotFoundException e) {
+        return new ResponseEntity<>(new ErrorResponse("Not found exception", e.getMessage()), HttpStatus.NOT_FOUND);
+    }
 
-        } else if (e instanceof ConflictException) {
-            response = new ErrorResponse("Conflict exception", e.getMessage());
-            result = new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        }
-
-        return result;
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handlerConflictException(ConflictException e) {
+        return new ResponseEntity<>(new ErrorResponse("Conflict exception", e.getMessage()), HttpStatus.CONFLICT);
     }
 }

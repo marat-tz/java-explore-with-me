@@ -41,7 +41,7 @@ public class PrivateEventController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEventPrivate(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
-        log.info("Попытка создать новое событие контроллер");
+        log.info("Попытка создать новое событие контроллер {}", dto.getDescription());
         return eventService.createEventPrivate(userId, dto);
     }
 
@@ -53,6 +53,7 @@ public class PrivateEventController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventPrivate(@PathVariable Long userId, @PathVariable Long eventId,
                                            @RequestBody UpdateEventUserRequest dto) {
+        log.info("Контроллер updateEventPrivate");
         return eventService.updateEventPrivate(userId, eventId, dto);
     }
 

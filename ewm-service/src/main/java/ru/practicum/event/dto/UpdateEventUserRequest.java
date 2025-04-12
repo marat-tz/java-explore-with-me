@@ -20,7 +20,7 @@ public class UpdateEventUserRequest {
     String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime eventDate;
+    String eventDate;
 
     LocationDto location;
 

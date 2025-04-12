@@ -24,13 +24,19 @@ public class PublicEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventShortDto> findEventsPublic(@RequestParam String text, @RequestParam List<Integer> categories,
+    public List<EventShortDto> findEventsPublic(@RequestParam(required = false) String text,
+                                                @RequestParam(required = false) List<Integer> categories,
                                                 @RequestParam(defaultValue = "false") Boolean paid,
-                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                                @RequestParam(required = false)
+                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                    LocalDateTime rangeStart,
+                                                @RequestParam(required = false)
+                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                    LocalDateTime rangeEnd,
                                                 @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                                @RequestParam String sort, @RequestParam Integer from,
-                                                @RequestParam Integer size) {
+                                                @RequestParam(required = false) String sort,
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
         log.info("Метод PublicEventController - findEvents");
         return eventService.findEventsPublic(text, categories, paid, rangeStart,
                 rangeEnd, onlyAvailable, sort, from, size);
@@ -38,7 +44,6 @@ public class PublicEventController {
 
     @GetMapping("/{eventId}")
     public EventFullDto findEventByIdPublic(@PathVariable Long eventId) {
-        log.info("Метод PublicEventController - findEventByIdPublic");
         return eventService.findEventByIdPublic(eventId);
     }
 

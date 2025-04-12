@@ -75,7 +75,8 @@ public class EventServiceImpl implements EventService {
 
     //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события
     //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
-    //если в запросе не указан диапазон дат [rangeStart-rangeEnd], то нужно выгружать события, которые произойдут позже текущей даты и времени
+    //если в запросе не указан диапазон дат [rangeStart-rangeEnd], то нужно выгружать события, которые произойдут позже
+    // текущей даты и времени
     //информация о каждом событии должна включать в себя количество просмотров и количество уже одобренных заявок на участие
     //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
     @Override
@@ -92,7 +93,6 @@ public class EventServiceImpl implements EventService {
 
             predicates.add(criteriaBuilder.equal(root.get("state"), State.PUBLISHED));
 
-            // TODO: не проходит тест из-за этого условия
             log.info("Текст: {}", text);
             if (text != null && !text.isBlank()) {
                 predicates.add(criteriaBuilder.or(criteriaBuilder.like((root.get("annotation")), "%" + text + "%"),
@@ -113,6 +113,10 @@ public class EventServiceImpl implements EventService {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
             }
 
+            if (rangeStart == null && rangeEnd == null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), LocalDateTime.now()));
+            }
+
             if (onlyAvailable) {
                 predicates.add(criteriaBuilder.greaterThan(root.get("participantLimit"), 0));
             }
@@ -124,8 +128,9 @@ public class EventServiceImpl implements EventService {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
         List<Event> test = eventRepository.findAll();
-        log.info("Длина списка events = {}", events.size());
-        log.info("Длина списка test = {}", test.size());
+
+        log.info("events = {}", events.size());
+        log.info("test = {}", test.size());
 
         List<EventShortDto> shortDto = events.stream()
                 .map(eventMapper::toShortDto)
@@ -144,15 +149,15 @@ public class EventServiceImpl implements EventService {
         Specification<Event> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!users.isEmpty()) {
+            if (users != null && !users.isEmpty()) {
                 predicates.add(root.get("initiator").get("id").in(users));
             }
 
-            if (!states.isEmpty()) {
+            if (states != null && !states.isEmpty()) {
                 predicates.add(root.get("state").in(states)); // TODO: у нас просто список enum, id нет
             }
 
-            if (!categories.isEmpty()) {
+            if (categories != null && !categories.isEmpty()) {
                 predicates.add(root.get("category").get("id").in(categories));
             }
 
@@ -186,11 +191,14 @@ public class EventServiceImpl implements EventService {
     // В случае, если события с заданным id не найдено, возвращает статус код 404
     @Override
     public EventFullDto findEventByIdPublic(Long eventId) {
-        Optional<Event> event = eventRepository.findById(eventId);
-        if (event.isEmpty()) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() ->
+                new NotFoundException("Событие " + eventId + " не найдено"));
+
+        if (event.getState() != State.PUBLISHED) {
             throw new NotFoundException("Событие " + eventId + " не найдено");
         }
-        return eventMapper.toFullDto(event.get());
+
+        return eventMapper.toFullDto(event);
     }
 
 
@@ -235,10 +243,9 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Пользователь " + userId + " не является создателем события " + eventId);
         }
 
-        if (event.getState() != State.PENDING) {
-            log.info("Условие event.getState() = {}", event.getState());
-            throw new ConflictException("Событие не отменено и не в состоянии ожидания");
-        }
+//        if (event.getState() != State.PENDING && event.getState() != State.CANCELED) {
+//            throw new ConflictException("Событие не отменено и не в состоянии ожидания");
+//        }
 
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Время события указано раньше, чем через два часа от текущего момента");
@@ -258,7 +265,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (dto.getEventDate() != null) {
-            event.setEventDate(dto.getEventDate());
+            event.setEventDate(LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
 
         if (dto.getLocation() != null) {
@@ -270,6 +277,9 @@ public class EventServiceImpl implements EventService {
         }
 
         if (dto.getParticipantLimit() != null) {
+            if (dto.getParticipantLimit() < 0) {
+                throw new ValidationException("Нельзя установить отрицательное значение лимита");
+            }
             event.setParticipantLimit(dto.getParticipantLimit());
         }
 
@@ -285,19 +295,21 @@ public class EventServiceImpl implements EventService {
             event.setState(State.CANCELED);
         }
 
-        switch (dto.getStateAction()) {
-            case StateAction.CANCEL_REVIEW:
-                event.setState(State.CANCELED);
-                break;
-            case StateAction.REJECT_EVENT:
-                event.setState(State.REJECT);
-                break;
-            case StateAction.SEND_TO_REVIEW:
-                event.setState(State.PENDING);
-                break;
-            case StateAction.PUBLISH_EVENT:
-                event.setState(State.PUBLISHED);
-                break;
+        if (dto.getStateAction() != null) {
+            switch (dto.getStateAction()) {
+                case StateAction.CANCEL_REVIEW:
+                    event.setState(State.CANCELED);
+                    break;
+                case StateAction.REJECT_EVENT:
+                    event.setState(State.REJECT);
+                    break;
+                case StateAction.SEND_TO_REVIEW:
+                    event.setState(State.PENDING);
+                    break;
+                case StateAction.PUBLISH_EVENT:
+                    event.setState(State.PUBLISHED);
+                    break;
+            }
         }
 
         return eventMapper.toFullDto(eventRepository.save(event));
@@ -438,9 +450,21 @@ public class EventServiceImpl implements EventService {
 
         if (dto.getStateAction() != null) {
             if (dto.getStateAction() == StateAction.PUBLISH_EVENT) {
+
+                if (event.getState() == State.PUBLISHED) {
+                    throw new ConflictException("Событие уже опубликовано");
+                } else if (event.getState() == State.REJECT) {
+                    throw new ConflictException("Событие отменено");
+                }
+
                 event.setState(State.PUBLISHED);
             }
             if (dto.getStateAction() == StateAction.REJECT_EVENT) {
+
+                if (event.getState() == State.PUBLISHED) {
+                    throw new ConflictException("Нельзя отменить опубликованное событие");
+                }
+
                 event.setState(State.REJECT);
             }
         }

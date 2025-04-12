@@ -41,8 +41,6 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public ParticipationRequestDto createUserRequestPrivate(Long userId, Long eventId) {
 
-        log.info("Сервис событие номер {}", eventId);
-
         User requester = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь " + userId + " не существует"));
 
@@ -65,7 +63,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Нельзя участвовать в неопубликованном событии");
         }
 
-        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+        if (event.getParticipantLimit() > 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
             throw new ConflictException("Достигнут лимит запросов на участие");
         }
 
@@ -85,6 +83,7 @@ public class RequestServiceImpl implements RequestService {
 
         if (request.getStatus() == RequestStatus.CONFIRMED) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            log.info("Количество участников события: {}", event.getConfirmedRequests());
             eventRepository.save(event);
         }
 
