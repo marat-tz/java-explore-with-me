@@ -1,7 +1,6 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import ru.practicum.exception.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -71,9 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto findCategoryById(Long categoryId) {
-        checkExist(categoryId);
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        return categoryMapper.toDto(category.get());
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new NotFoundException("Категория с id = " + categoryId + " не найдена."));
+        return categoryMapper.toDto(category);
     }
 
     private void checkExist(Long categoryId) {
@@ -81,6 +79,4 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NotFoundException("Категория с id = " + categoryId + " не найдена.");
         }
     }
-
-
 }

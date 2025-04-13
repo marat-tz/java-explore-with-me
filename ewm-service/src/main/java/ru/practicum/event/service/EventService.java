@@ -1,7 +1,6 @@
 package ru.practicum.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.event.dto.EventRequestStatusUpdateResult;
@@ -25,11 +24,11 @@ public interface EventService {
                                          String sort, Integer from, Integer size, HttpServletRequest httpServletRequest);
 
     List<EventFullDto> findAdminEvents(List<Integer> users, List<State> states,
-                                        List<Integer> categories,
-                                        LocalDateTime rangeStart,
-                                        LocalDateTime rangeEnd,
-                                        Integer from,
-                                        Integer size);
+                                       List<Integer> categories,
+                                       LocalDateTime rangeStart,
+                                       LocalDateTime rangeEnd,
+                                       Integer from,
+                                       Integer size);
 
     EventFullDto findEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
 

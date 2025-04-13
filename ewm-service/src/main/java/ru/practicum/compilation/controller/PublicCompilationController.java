@@ -29,5 +29,4 @@ public class PublicCompilationController {
     public CompilationDto findCompilationById(@PathVariable Long compId) {
         return compilationService.findCompilationById(compId);
     }
-
 }

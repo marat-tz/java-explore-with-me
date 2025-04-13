@@ -1,6 +1,5 @@
 package ru.practicum.event.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.model.User;
 

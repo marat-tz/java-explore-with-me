@@ -10,12 +10,10 @@ import ru.practicum.compilation.dto.UpdateCompilationDto;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +39,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto findCompilationById(Long compId) {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(() ->
-            new NotFoundException("Подборка " + compId + " не найдена"));
+                new NotFoundException("Подборка " + compId + " не найдена"));
 
         return compilationMapper.toDto(compilation);
     }
@@ -85,6 +83,4 @@ public class CompilationServiceImpl implements CompilationService {
     public void deleteCompilation(Long compId) {
         compilationRepository.deleteById(compId);
     }
-
-
 }

@@ -6,18 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.model.State;
-import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO for {@link ru.practicum.event.model.Event}
- */
 @AllArgsConstructor
 @Getter
 @Setter

@@ -71,12 +71,6 @@ public class EventServiceImpl implements EventService {
                 .toList();
     }
 
-    //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события
-    //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
-    //если в запросе не указан диапазон дат [rangeStart-rangeEnd], то нужно выгружать события, которые произойдут позже
-    // текущей даты и времени
-    //информация о каждом событии должна включать в себя количество просмотров и количество уже одобренных заявок на участие
-    //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
     @Override
     public List<EventShortDto> findEventsPublic(String text, List<Integer> categories, Boolean paid,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd,
@@ -144,7 +138,6 @@ public class EventServiceImpl implements EventService {
 
     }
 
-    // Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
     @Override
     public List<EventFullDto> findAdminEvents(List<Integer> users, List<State> states, List<Integer> categories,
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
@@ -181,18 +174,11 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
         log.info("Длина списка events = {}", events.size());
 
-        List<EventFullDto> fullDto = events.stream()
+        return events.stream()
                 .map(eventMapper::toFullDto)
                 .toList();
-
-        return fullDto;
     }
 
-
-    // событие должно быть опубликовано
-    // информация о событии должна включать в себя количество просмотров и количество подтвержденных запросов
-    // информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
-    // В случае, если события с заданным id не найдено, возвращает статус код 404
     @Override
     public EventFullDto findEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
@@ -214,7 +200,6 @@ public class EventServiceImpl implements EventService {
 
         return eventMapper.toFullDto(event);
     }
-
 
     @Override
     public EventFullDto createEventPrivate(Long userId, NewEventDto dto) {
@@ -270,10 +255,6 @@ public class EventServiceImpl implements EventService {
         if (event.getState() == State.PUBLISHED) {
             throw new ConflictException("Событие не отменено и не в состоянии ожидания.");
         }
-
-//        if (event.getState() != State.PENDING && event.getState() != State.CANCELED) {
-//            throw new ConflictException("Событие не отменено и не в состоянии ожидания");
-//        }
 
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Время события указано раньше, чем через два часа от текущего момента");
@@ -339,7 +320,6 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toFullDto(eventRepository.save(event));
     }
 
-    // Получение информации о запросах на участие в событии текущего пользователя
     @Override
     public List<ParticipationRequestDto> findEventRequestsPrivate(Long userId, Long eventId) {
 
@@ -361,10 +341,6 @@ public class EventServiceImpl implements EventService {
                 .toList();
     }
 
-//    если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
-//    нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
-//    статус можно изменить только у заявок, находящихся в состоянии ожидания (Ожидается код ошибки 409)
-//    если при подтверждении данной заявки, лимит заявок для события исчерпан, то все неподтверждённые заявки необходимо отклонить
     @Override
     public EventRequestStatusUpdateResult updateEventRequestPrivate(Long userId, Long eventId,
                                                                     EventRequestStatusUpdateRequest dto) {
@@ -424,14 +400,9 @@ public class EventServiceImpl implements EventService {
         log.info("confirmedDtoList {}", confirmedDtoList.size());
         log.info("rejectedDtoList {}", rejectedDtoList.size());
 
-        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(confirmedDtoList, rejectedDtoList);
-
-        return result;
+        return new EventRequestStatusUpdateResult(confirmedDtoList, rejectedDtoList);
     }
 
-    // дата начала изменяемого события должна быть не ранее чем за час от даты публикации. (Ожидается код ошибки 409)
-    // событие можно публиковать, только если оно в состоянии ожидания публикации (Ожидается код ошибки 409)
-    // событие можно отклонить, только если оно еще не опубликовано (Ожидается код ошибки 409)
     @Override
     public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest dto) {
         log.info("Admin: Обновление события");
@@ -515,5 +486,4 @@ public class EventServiceImpl implements EventService {
         );
         statsClient.hit(hitRequest);
     }
-
 }

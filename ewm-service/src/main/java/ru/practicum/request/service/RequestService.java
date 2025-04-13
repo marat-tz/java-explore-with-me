@@ -1,8 +1,5 @@
 package ru.practicum.request.service;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
 import java.util.List;

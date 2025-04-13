@@ -36,10 +36,10 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     List<EndpointHitStatsProjection> findAllNotUrisTrueUnique(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("select e.app as app, e.uri as uri, count(distinct e.ip) as hits " +
-        "from EndpointHit as e " +
-        "where e.timestamp between :start and :end and e.uri in :uris " +
-        "group by e.app, e.uri " +
-        "order by count(distinct e.ip) desc")
+            "from EndpointHit as e " +
+            "where e.timestamp between :start and :end and e.uri in :uris " +
+            "group by e.app, e.uri " +
+            "order by count(distinct e.ip) desc")
     List<EndpointHitStatsProjection> findAllWithUrisTrueUnique(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
                                                                @Param("uris") List<String> uris);
 

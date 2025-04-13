@@ -15,10 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.State;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;

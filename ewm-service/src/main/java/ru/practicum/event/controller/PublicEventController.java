@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,6 @@ import ru.practicum.event.service.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
@@ -31,17 +29,16 @@ public class PublicEventController {
                                                 @RequestParam(required = false) List<Integer> categories,
                                                 @RequestParam(required = false) Boolean paid,
                                                 @RequestParam(required = false)
-                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                    LocalDateTime rangeStart,
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                LocalDateTime rangeStart,
                                                 @RequestParam(required = false)
-                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                    LocalDateTime rangeEnd,
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                LocalDateTime rangeEnd,
                                                 @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                                 @RequestParam(required = false) String sort,
                                                 @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
                                                 @RequestParam(defaultValue = "10") Integer size,
                                                 HttpServletRequest httpServletRequest) {
-        log.info("Метод PublicEventController - findEvents");
         return eventService.findEventsPublic(text, categories, paid, rangeStart,
                 rangeEnd, onlyAvailable, sort, from, size, httpServletRequest);
     }
@@ -50,6 +47,5 @@ public class PublicEventController {
     public EventFullDto findEventByIdPublic(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
         return eventService.findEventByIdPublic(eventId, httpServletRequest);
     }
-
 }
 

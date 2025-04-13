@@ -7,8 +7,6 @@ import org.mapstruct.ReportingPolicy;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
-import ru.practicum.user.dto.UserDto;
-import ru.practicum.user.model.User;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {

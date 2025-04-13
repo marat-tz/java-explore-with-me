@@ -1,10 +1,8 @@
 package ru.practicum.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.user.dto.UserDto;

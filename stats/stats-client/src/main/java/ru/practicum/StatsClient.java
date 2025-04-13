@@ -1,6 +1,5 @@
 package ru.practicum;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
 public class StatsClient {
 
@@ -31,7 +29,6 @@ public class StatsClient {
 
     public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
                                                List<String> uris, Boolean unique) {
-        log.info("Начало метода findStats");
         String uri = UriComponentsBuilder.fromHttpUrl(serverUrl)
                 .path("/stats")
                 .queryParam("start", start)
@@ -40,7 +37,6 @@ public class StatsClient {
                 .queryParam("unique", unique)
                 .toUriString();
 
-        log.info("Получение ResponseEntity findStats");
         ResponseEntity<List<ViewStatDtoResponse>> response = restTemplate.exchange(uri, HttpMethod.GET,
                 null, new ParameterizedTypeReference<>() {
                 });

@@ -2,7 +2,6 @@ package ru.practicum.event.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,7 +23,6 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/users/{userId}/events")
 @RequiredArgsConstructor
@@ -41,7 +39,6 @@ public class PrivateEventController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEventPrivate(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
-        log.info("Попытка создать новое событие контроллер {}", dto.getDescription());
         return eventService.createEventPrivate(userId, dto);
     }
 
@@ -53,7 +50,6 @@ public class PrivateEventController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventPrivate(@PathVariable Long userId, @PathVariable Long eventId,
                                            @Valid @RequestBody UpdateEventUserRequest dto) {
-        log.info("Контроллер updateEventPrivate");
         return eventService.updateEventPrivate(userId, eventId, dto);
     }
 
@@ -67,6 +63,5 @@ public class PrivateEventController {
                                                                     @RequestBody EventRequestStatusUpdateRequest dto) {
         return eventService.updateEventRequestPrivate(userId, eventId, dto);
     }
-
 }
 

@@ -17,9 +17,6 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationDto;
 import ru.practicum.compilation.service.CompilationService;
 
-import java.util.List;
-
-@Slf4j
 @RestController
 @RequestMapping("/admin/compilations")
 @RequiredArgsConstructor

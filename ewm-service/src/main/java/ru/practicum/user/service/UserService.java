@@ -1,6 +1,5 @@
 package ru.practicum.user.service;
 
-import org.springframework.http.ResponseEntity;
 import ru.practicum.user.dto.UserDto;
 
 import java.util.List;

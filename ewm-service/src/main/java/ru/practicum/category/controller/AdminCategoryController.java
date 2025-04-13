@@ -2,7 +2,6 @@ package ru.practicum.category.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,7 +15,6 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.service.CategoryService;
 
-@Slf4j
 @RestController
 @RequestMapping(path = "/admin/categories")
 @RequiredArgsConstructor
@@ -27,7 +25,6 @@ public class AdminCategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@Valid @RequestBody NewCategoryDto dto) {
-        log.info("Попытка создать категорию контроллер");
         return categoryService.createCategory(dto);
     }
 
