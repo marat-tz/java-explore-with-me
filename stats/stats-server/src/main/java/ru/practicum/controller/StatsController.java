@@ -1,4 +1,4 @@
-package ru.practicum.stats.controller;
+package ru.practicum.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.stats.EndpointHitDtoRequest;
-import ru.practicum.stats.ViewStatDtoResponse;
-import ru.practicum.stats.service.StatsService;
+import ru.practicum.EndpointHitDtoRequest;
+import ru.practicum.ViewStatDtoResponse;
+import ru.practicum.service.StatsService;
 
 import java.time.LocalDateTime;
 import java.util.List;

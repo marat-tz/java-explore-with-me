@@ -1,4 +1,4 @@
-package ru.practicum.stats;
+package ru.practicum;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,7 +26,7 @@ public class StatsClient {
     }
 
     public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
-                                                               List<String> uris, Boolean unique) {
+                                               List<String> uris, Boolean unique) {
         String uri = UriComponentsBuilder.fromHttpUrl(serverUrl)
                 .path("/stats")
                 .queryParam("start", start)
@@ -60,7 +60,8 @@ public class StatsClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<EndpointHitDtoRequest> entity = new HttpEntity<>(dto, headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
+        //ResponseEntity<Void> response =
+        restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
 
 //        if (response.getStatusCode().value() == 404) {
 //            throw new NotFoundException("Ошибка при записи события (метод hit)");

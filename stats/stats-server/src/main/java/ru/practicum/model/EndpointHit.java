@@ -1,4 +1,4 @@
-package ru.practicum.stats.model;
+package ru.practicum.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
