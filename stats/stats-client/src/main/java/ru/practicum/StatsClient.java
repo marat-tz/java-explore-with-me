@@ -1,6 +1,5 @@
 package ru.practicum;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,17 +42,8 @@ public class StatsClient {
 
         log.info("Получение ResponseEntity findStats");
         ResponseEntity<List<ViewStatDtoResponse>> response = restTemplate.exchange(uri, HttpMethod.GET,
-                null, new ParameterizedTypeReference<>() {});
-
-//        if (response.getStatusCode().value() == 404) {
-//            throw new NotFoundException("Ошибка при записи события (метод hit)");
-//
-//        } else if (response.getStatusCode().value() == 400) {
-//            throw new ValidationException("Ошибка при записи события(метод hit)");
-//
-//        } else if (response.getStatusCode().is5xxServerError()) {
-//            throw new InternalErrorException("Ошибка при записи события(метод hit)");
-//        }
+                null, new ParameterizedTypeReference<>() {
+                });
 
         return response.getBody();
     }
@@ -67,18 +57,6 @@ public class StatsClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<EndpointHitDtoRequest> entity = new HttpEntity<>(dto, headers);
 
-        //ResponseEntity<Void> response =
         restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
-
-//        if (response.getStatusCode().value() == 404) {
-//            throw new NotFoundException("Ошибка при записи события (метод hit)");
-//
-//        } else if (response.getStatusCode().value() == 400) {
-//            throw new ValidationException("Ошибка при записи события(метод hit)");
-//
-//        } else if (response.getStatusCode().is5xxServerError()) {
-//            throw new InternalErrorException("Ошибка при записи события(метод hit)");
-//        }
-
     }
 }
