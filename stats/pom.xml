@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath> <!-- Путь к родительскому POM -->
     </parent>
 
+    <groupId>ru.practicum</groupId>
     <artifactId>stats</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
