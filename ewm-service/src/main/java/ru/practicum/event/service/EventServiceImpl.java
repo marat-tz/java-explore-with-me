@@ -80,7 +80,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> findEventsPublic(String text, List<Integer> categories, Boolean paid,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                                Boolean onlyAvailable, String sort, Integer from, Integer size) {
+                                                Boolean onlyAvailable, String sort, Integer from, Integer size,
+                                                HttpServletRequest httpServletRequest) {
 
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("Время начала позже времени окончания");
@@ -134,12 +135,10 @@ public class EventServiceImpl implements EventService {
             }
         }
 
+        hit(httpServletRequest);
+
         Pageable pageable = PageRequest.of(from / size, size, sorting);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
-        List<Event> test = eventRepository.findAll();
-
-        log.info("events = {}", events.size());
-        log.info("test = {}", test.size());
 
         return eventMapper.toShortDto(events);
 
@@ -197,18 +196,21 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto findEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
-                new NotFoundException("Событие " + eventId + " не найдено"));
+                new NotFoundException("findEventByIdPublic: Событие " + eventId + " не найдено"));
 
         if (event.getState() != State.PUBLISHED) {
-            throw new NotFoundException("Событие " + eventId + " не найдено");
+            throw new NotFoundException("findEventByIdPublic: Событие " + eventId + " не опубликовано");
         }
 
         hit(httpServletRequest);
 
         List<ViewStatDtoResponse> stats = statsClient.findStats(event.getPublishedOn(),
                 LocalDateTime.now(), List.of("/events/" + eventId), true);
+        log.info("Метод findEventByIdPublic, длина списка stats: {}", stats.size());
         Long views = stats.isEmpty() ? 0L : stats.get(0).getHits();
         event.setViews(views);
+
+        log.info("Метод findEventByIdPublic, количество сохраняемых просмотров: {}", views);
 
         return eventMapper.toFullDto(event);
     }
@@ -489,6 +491,7 @@ public class EventServiceImpl implements EventService {
                 }
 
                 event.setState(State.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
             }
             if (dto.getStateAction() == StateAction.REJECT_EVENT) {
 

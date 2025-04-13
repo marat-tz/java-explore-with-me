@@ -39,10 +39,11 @@ public class PublicEventController {
                                                 @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                                 @RequestParam(required = false) String sort,
                                                 @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
-                                                @RequestParam(defaultValue = "10") Integer size) {
+                                                @RequestParam(defaultValue = "10") Integer size,
+                                                HttpServletRequest httpServletRequest) {
         log.info("Метод PublicEventController - findEvents");
         return eventService.findEventsPublic(text, categories, paid, rangeStart,
-                rangeEnd, onlyAvailable, sort, from, size);
+                rangeEnd, onlyAvailable, sort, from, size, httpServletRequest);
     }
 
     @GetMapping("/{eventId}")

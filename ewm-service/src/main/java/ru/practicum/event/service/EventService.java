@@ -22,7 +22,7 @@ public interface EventService {
     List<EventShortDto> findEventsPublic(String text, List<Integer> categories,
                                          Boolean paid, LocalDateTime rangeStart,
                                          LocalDateTime rangeEnd, Boolean onlyAvailable,
-                                         String sort, Integer from, Integer size);
+                                         String sort, Integer from, Integer size, HttpServletRequest httpServletRequest);
 
     List<EventFullDto> findAdminEvents(List<Integer> users, List<State> states,
                                         List<Integer> categories,

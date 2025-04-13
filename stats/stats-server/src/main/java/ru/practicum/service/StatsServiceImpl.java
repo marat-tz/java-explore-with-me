@@ -24,32 +24,42 @@ public class StatsServiceImpl implements StatsService {
 
     @Transactional
     public void create(EndpointHitDtoRequest dto) {
+        log.info("Сохранение статистики StatsServiceImpl - create");
         statsRepository.save(EndpointDtoMapper.mapDtoToEntity(dto));
     }
 
     public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
                                                List<String> uris, Boolean unique) {
 
+        log.info("Выполнение метода findStats");
+        log.info("Суммарное количество обращений в базе: {}", statsRepository.findAll().size());
+
+        log.info("findAllWithUrisTrueUnique количество обращений в базе: {}",
+                statsRepository.findAllWithUrisTrueUnique(start, end, uris).size());
+        log.info("Содержимое списка uris: {}", uris);
+        log.info("Значение start: {}", start);
+        log.info("Значение end: {}", end);
         List<EndpointHitStatsProjection> resultList;
 
         if (Objects.isNull(uris) || uris.isEmpty()) {
 
             if (!unique) {
-                log.info("Выполнение метода findAllNoUrisFalseUnique");
                 resultList = statsRepository.findAllNotUrisFalseUnique(start, end);
+                log.info("Выполнение метода findAllNotUrisFalseUnique, размер списка = {}", resultList.size());
             } else {
-                log.info("Выполнение метода findAllNoUrisTrueUnique");
                 resultList = statsRepository.findAllNotUrisTrueUnique(start, end);
+                log.info("Выполнение метода findAllNotUrisTrueUnique, размер списка = {}", resultList.size());
             }
 
         } else {
 
             if (!unique) {
-                log.info("Выполнение метода findAllYesUrisFalseUnique");
                 resultList = statsRepository.findAllWithUrisFalseUnique(start, end, uris);
+                log.info("Выполнение метода findAllWithUrisFalseUnique, размер списка = {}", resultList.size());
             } else {
-                log.info("Выполнение метода findAllYesUrisTrueUnique");
+                //resultList = statsRepository.findAllWithUrisTrueUnique(start, end, uris);
                 resultList = statsRepository.findAllWithUrisTrueUnique(start, end, uris);
+                log.info("Выполнение метода findAllWithUrisTrueUnique, размер списка = {}", resultList.size());
             }
 
         }
