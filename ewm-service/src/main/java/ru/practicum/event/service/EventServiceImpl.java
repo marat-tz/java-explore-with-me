@@ -143,32 +143,7 @@ public class EventServiceImpl implements EventService {
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Integer from, Integer size) {
 
-        Specification<Event> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (users != null && !users.isEmpty()) {
-                predicates.add(root.get("initiator").get("id").in(users));
-            }
-
-            if (states != null && !states.isEmpty()) {
-                predicates.add(root.get("state").in(states));
-            }
-
-            if (categories != null && !categories.isEmpty()) {
-                predicates.add(root.get("category").get("id").in(categories));
-            }
-
-            if (rangeStart != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
-            }
-
-            if (rangeEnd != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-
-        };
+        Specification<Event> spec = getSpecification(users, states, categories, rangeStart, rangeEnd);
 
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
@@ -485,5 +460,36 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now()
         );
         statsClient.hit(hitRequest);
+    }
+
+    private Specification<Event> getSpecification(List<Integer> users, List<State> states, List<Integer> categories,
+                                                  LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (users != null && !users.isEmpty()) {
+                predicates.add(root.get("initiator").get("id").in(users));
+            }
+
+            if (states != null && !states.isEmpty()) {
+                predicates.add(root.get("state").in(states));
+            }
+
+            if (categories != null && !categories.isEmpty()) {
+                predicates.add(root.get("category").get("id").in(categories));
+            }
+
+            if (rangeStart != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
+            }
+
+            if (rangeEnd != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+
+        };
     }
 }
