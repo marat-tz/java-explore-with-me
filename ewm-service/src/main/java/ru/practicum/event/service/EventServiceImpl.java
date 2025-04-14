@@ -160,7 +160,7 @@ public class EventServiceImpl implements EventService {
                 new NotFoundException("findEventByIdPublic: Событие " + eventId + " не найдено"));
 
         if (event.getState() != State.PUBLISHED) {
-            throw new NotFoundException("findEventByIdPublic: Событие " + eventId + " не опубликовано");
+            throw new ConflictException("findEventByIdPublic: Событие " + eventId + " не опубликовано");
         }
 
         hit(httpServletRequest);
