@@ -84,43 +84,7 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Время начала позже времени окончания");
         }
 
-        Specification<Event> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            predicates.add(criteriaBuilder.equal(root.get("state"), State.PUBLISHED));
-
-            log.info("Текст: {}", text);
-            if (text != null && !text.isBlank()) {
-                String pattern = "%%" + text.toLowerCase() + "%%";
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), pattern),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern)
-                ));
-            }
-
-            if (categories != null && !categories.isEmpty()) {
-                predicates.add(root.get("category").get("id").in(categories));
-            }
-
-            if (paid != null) {
-                predicates.add(criteriaBuilder.equal(root.get("paid"), paid));
-            }
-
-            if (rangeStart != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
-            }
-
-            if (rangeEnd != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
-            }
-
-            if (onlyAvailable != null && onlyAvailable) {
-                predicates.add(criteriaBuilder.greaterThan(root.get("participantLimit"), 0));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-
-        };
+        Specification<Event> spec = getSpecificationPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
 
         EventSort eventSort = sort != null ? EventSort.valueOf(sort.toUpperCase()) : null;
         Sort sorting = Sort.unsorted();
@@ -146,7 +110,7 @@ public class EventServiceImpl implements EventService {
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Integer from, Integer size) {
 
-        Specification<Event> spec = getSpecification(users, states, categories, rangeStart, rangeEnd);
+        Specification<Event> spec = getSpecificationAdmin(users, states, categories, rangeStart, rangeEnd);
 
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
@@ -465,8 +429,8 @@ public class EventServiceImpl implements EventService {
         statsClient.hit(hitRequest);
     }
 
-    private Specification<Event> getSpecification(List<Integer> users, List<State> states, List<Integer> categories,
-                                                  LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+    private Specification<Event> getSpecificationAdmin(List<Integer> users, List<State> states, List<Integer> categories,
+                                                       LocalDateTime rangeStart, LocalDateTime rangeEnd) {
 
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -494,5 +458,47 @@ public class EventServiceImpl implements EventService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 
         };
+    }
+
+    private Specification<Event> getSpecificationPublic(String text, List<Integer> categories, Boolean paid,
+                                                        LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                        Boolean onlyAvailable) {
+
+        return (root, query, criteriaBuilder) -> {
+                    List<Predicate> predicates = new ArrayList<>();
+
+                    predicates.add(criteriaBuilder.equal(root.get("state"), State.PUBLISHED));
+
+                    if (text != null && !text.isBlank()) {
+                        String pattern = "%%" + text.toLowerCase() + "%%";
+                        predicates.add(criteriaBuilder.or(
+                                criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), pattern),
+                                criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern)
+                        ));
+                    }
+
+                    if (categories != null && !categories.isEmpty()) {
+                        predicates.add(root.get("category").get("id").in(categories));
+                    }
+
+                    if (paid != null) {
+                        predicates.add(criteriaBuilder.equal(root.get("paid"), paid));
+                    }
+
+                    if (rangeStart != null) {
+                        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
+                    }
+
+                    if (rangeEnd != null) {
+                        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
+                    }
+
+                    if (onlyAvailable != null && onlyAvailable) {
+                        predicates.add(criteriaBuilder.greaterThan(root.get("participantLimit"), 0));
+                    }
+
+                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+
+                };
     }
 }
