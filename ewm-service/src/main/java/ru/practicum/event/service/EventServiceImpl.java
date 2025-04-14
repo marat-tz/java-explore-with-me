@@ -1,6 +1,5 @@
 package ru.practicum.event.service;
 
-import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ import ru.practicum.event.mapper.UpdateEventMapper;
 import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.repository.LocationRepository;
+import ru.practicum.event.service.specification.DbSpecifications;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -85,7 +85,7 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Время начала позже времени окончания");
         }
 
-        Specification<Event> spec = getSpecificationPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
+        Specification<Event> spec = DbSpecifications.getSpecificationPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
 
         EventSort eventSort = sort != null ? EventSort.valueOf(sort.toUpperCase()) : null;
         Sort sorting = Sort.unsorted();
@@ -111,7 +111,7 @@ public class EventServiceImpl implements EventService {
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Integer from, Integer size) {
 
-        Specification<Event> spec = getSpecificationAdmin(users, states, categories, rangeStart, rangeEnd);
+        Specification<Event> spec = DbSpecifications.getSpecificationAdmin(users, states, categories, rangeStart, rangeEnd);
 
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
@@ -292,79 +292,6 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now()
         );
         statsClient.hit(hitRequest);
-    }
-
-    private Specification<Event> getSpecificationAdmin(List<Integer> users, List<State> states, List<Integer> categories,
-                                                       LocalDateTime rangeStart, LocalDateTime rangeEnd) {
-
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (users != null && !users.isEmpty()) {
-                predicates.add(root.get("initiator").get("id").in(users));
-            }
-
-            if (states != null && !states.isEmpty()) {
-                predicates.add(root.get("state").in(states));
-            }
-
-            if (categories != null && !categories.isEmpty()) {
-                predicates.add(root.get("category").get("id").in(categories));
-            }
-
-            if (rangeStart != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
-            }
-
-            if (rangeEnd != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-
-        };
-    }
-
-    private Specification<Event> getSpecificationPublic(String text, List<Integer> categories, Boolean paid,
-                                                        LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                                        Boolean onlyAvailable) {
-
-        return (root, query, criteriaBuilder) -> {
-                    List<Predicate> predicates = new ArrayList<>();
-
-                    predicates.add(criteriaBuilder.equal(root.get("state"), State.PUBLISHED));
-
-                    if (text != null && !text.isBlank()) {
-                        String pattern = "%%" + text.toLowerCase() + "%%";
-                        predicates.add(criteriaBuilder.or(
-                                criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), pattern),
-                                criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern)
-                        ));
-                    }
-
-                    if (categories != null && !categories.isEmpty()) {
-                        predicates.add(root.get("category").get("id").in(categories));
-                    }
-
-                    if (paid != null) {
-                        predicates.add(criteriaBuilder.equal(root.get("paid"), paid));
-                    }
-
-                    if (rangeStart != null) {
-                        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
-                    }
-
-                    if (rangeEnd != null) {
-                        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
-                    }
-
-                    if (onlyAvailable != null && onlyAvailable) {
-                        predicates.add(criteriaBuilder.greaterThan(root.get("participantLimit"), 0));
-                    }
-
-                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-
-                };
     }
 
     private void checkEventUpdatePrivate(Event event, Long userId, Long eventId) {
