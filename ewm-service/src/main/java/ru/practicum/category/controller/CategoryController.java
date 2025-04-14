@@ -1,6 +1,8 @@
 package ru.practicum.category.controller;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/categories")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    final CategoryService categoryService;
 
     @GetMapping
     public List<CategoryDto> findCategories(@RequestParam(defaultValue = "0") Integer from,

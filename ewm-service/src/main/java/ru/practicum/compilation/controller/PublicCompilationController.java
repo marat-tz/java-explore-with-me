@@ -1,6 +1,8 @@
 package ru.practicum.compilation.controller;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/compilations")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicCompilationController {
 
-    private final CompilationService compilationService;
+    final CompilationService compilationService;
 
     @GetMapping
     public List<CompilationDto> findCompilations(@RequestParam(defaultValue = "false") Boolean pinned,

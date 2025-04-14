@@ -1,6 +1,8 @@
 package ru.practicum.request.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.State;
@@ -22,12 +24,13 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestServiceImpl implements RequestService {
 
-    private final RequestRepository requestRepository;
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
-    private final RequestMapper requestMapper;
+    final RequestRepository requestRepository;
+    final EventRepository eventRepository;
+    final UserRepository userRepository;
+    final RequestMapper requestMapper;
 
     @Override
     public List<ParticipationRequestDto> findUserRequestsPrivate(Long userId) {

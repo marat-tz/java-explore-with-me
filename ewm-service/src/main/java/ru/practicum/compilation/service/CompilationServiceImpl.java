@@ -1,6 +1,8 @@
 package ru.practicum.compilation.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationServiceImpl implements CompilationService {
 
-    private final CompilationMapper compilationMapper;
-    private final EventMapper eventMapper;
-    private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
+    final CompilationMapper compilationMapper;
+    final CompilationRepository compilationRepository;
+    final EventRepository eventRepository;
 
     @Override
     public List<CompilationDto> findCompilations(Boolean pinned, Integer from, Integer size) {

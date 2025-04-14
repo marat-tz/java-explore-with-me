@@ -1,6 +1,8 @@
 package ru.practicum.user.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-
-    private final UserMapper userMapper;
+    final UserRepository userRepository;
+    final UserMapper userMapper;
 
     public List<UserDto> findUsers(List<Integer> ids, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);

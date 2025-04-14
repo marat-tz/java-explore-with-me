@@ -1,7 +1,9 @@
 package ru.practicum.compilation.controller;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,9 +21,10 @@ import ru.practicum.compilation.service.CompilationService;
 @RestController
 @RequestMapping("/admin/compilations")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCompilationController {
 
-    private final CompilationService compilationService;
+    final CompilationService compilationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

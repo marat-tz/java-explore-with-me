@@ -1,6 +1,8 @@
 package ru.practicum.category.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryServiceImpl implements CategoryService {
 
-    private final EventRepository eventRepository;
+    final EventRepository eventRepository;
 
-    private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
+    final CategoryRepository categoryRepository;
+    final CategoryMapper categoryMapper;
 
     @Override
     public CategoryDto createCategory(NewCategoryDto dto) {

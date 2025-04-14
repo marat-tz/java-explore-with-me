@@ -2,7 +2,9 @@ package ru.practicum.event.service;
 
 import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,17 +49,18 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventServiceImpl implements EventService {
 
-    private final RequestMapper requestMapper;
-    private final RequestRepository requestRepository;
-    private final EventRepository eventRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
-    private final LocationRepository locationRepository;
-    private final EventMapper eventMapper;
-    private final LocationMapper locationMapper;
-    private final StatsClient statsClient;
+    final RequestMapper requestMapper;
+    final RequestRepository requestRepository;
+    final EventRepository eventRepository;
+    final CategoryRepository categoryRepository;
+    final UserRepository userRepository;
+    final LocationRepository locationRepository;
+    final EventMapper eventMapper;
+    final LocationMapper locationMapper;
+    final StatsClient statsClient;
 
     @Override
     public List<EventShortDto> findEventsPrivate(Long userId, Integer from, Integer size) {

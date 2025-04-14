@@ -3,7 +3,9 @@ package ru.practicum.event.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +22,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicEventController {
 
-    private final EventService eventService;
+    final EventService eventService;
 
     @GetMapping
     public List<EventShortDto> findEventsPublic(@RequestParam(required = false) @Size(min = 1, max = 7000) String text,

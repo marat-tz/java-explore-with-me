@@ -1,5 +1,7 @@
 package ru.practicum;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,10 +18,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatsClient {
 
-    private final RestTemplate restTemplate;
-    private final String serverUrl;
+    final RestTemplate restTemplate;
+    final String serverUrl;
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplate rest) {
