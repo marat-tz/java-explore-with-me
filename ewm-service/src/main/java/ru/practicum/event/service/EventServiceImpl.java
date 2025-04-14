@@ -168,7 +168,7 @@ public class EventServiceImpl implements EventService {
         List<ViewStatDtoResponse> stats = statsClient.findStats(event.getPublishedOn(),
                 LocalDateTime.now(), List.of("/events/" + eventId), true);
         log.info("Метод findEventByIdPublic, длина списка stats: {}", stats.size());
-        Long views = stats.isEmpty() ? 0L : stats.get(0).getHits();
+        Long views = stats.isEmpty() ? 0L : stats.getFirst().getHits();
         event.setViews(views);
 
         log.info("Метод findEventByIdPublic, количество сохраняемых просмотров: {}", views);
