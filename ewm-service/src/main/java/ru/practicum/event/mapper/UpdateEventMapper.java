@@ -36,14 +36,6 @@ public class UpdateEventMapper {
             event.setDescription(dto.getDescription());
         }
 
-        if (dto.getEventDate() != null) {
-            if (LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                    .isBefore(LocalDateTime.now())) {
-                throw new ValidationException("Указана недопустимая дата");
-            }
-            event.setEventDate(LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
-
         if (dto.getLocation() != null) {
             event.setLocation(locationRepository.save(locationMapper.toEntity(dto.getLocation())));
         }
@@ -71,6 +63,10 @@ public class UpdateEventMapper {
             event.setState(State.CANCELED);
         }
 
+        if (dto.getEventDate() != null) {
+            setEventDate(event, dto.getEventDate());
+        }
+
         return event;
     }
 
@@ -90,14 +86,6 @@ public class UpdateEventMapper {
 
         if (dto.getDescription() != null && !dto.getDescription().isBlank()) {
             event.setDescription(dto.getDescription());
-        }
-
-        if (dto.getEventDate() != null) {
-            if (LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                    .isBefore(LocalDateTime.now())) {
-                throw new ValidationException("Указанная дата уже наступила");
-            }
-            event.setEventDate(LocalDateTime.parse(dto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
 
         if (dto.getLocation() != null) {
@@ -120,6 +108,27 @@ public class UpdateEventMapper {
             event.setTitle(dto.getTitle());
         }
 
+        if (dto.getEventDate() != null) {
+            setEventDate(event, dto.getEventDate());
+        }
+
+        setState(event, dto);
+
+        return event;
+
+    }
+
+    private void setEventDate(Event event, String date) {
+        if (date != null) {
+            if (LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    .isBefore(LocalDateTime.now())) {
+                throw new ValidationException("Указанная дата уже наступила");
+            }
+            event.setEventDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
+    private void setState(Event event, UpdateEventAdminRequest dto) {
         if (dto.getStateAction() != null) {
             if (dto.getStateAction() == StateAction.PUBLISH_EVENT) {
 
@@ -142,8 +151,5 @@ public class UpdateEventMapper {
                 event.setState(State.REJECT);
             }
         }
-
-        return event;
-
     }
 }
