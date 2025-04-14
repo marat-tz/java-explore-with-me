@@ -1,7 +1,5 @@
 package ru.practicum.event.mapper;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
