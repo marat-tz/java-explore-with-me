@@ -5,9 +5,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=stats
-      - POSTGRES_USER=stats
-      - POSTGRES_DB=stats
+      POSTGRES_USER: stats
+      POSTGRES_PASSWORD: stats
+      POSTGRES_DB: stats
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -28,9 +28,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_PASSWORD=main
-      - POSTGRES_USER=main
-      - POSTGRES_DB=main
+      POSTGRES_USER: ewmdb
+      POSTGRES_PASSWORD: ewmdb
+      POSTGRES_DB: ewmdb
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -44,7 +44,3 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main_db
-      - SPRING_DATASOURCE_USERNAME=main
-      - SPRING_DATASOURCE_PASSWORD=main
