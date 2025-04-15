@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +29,12 @@ public class CommentControllerPrivate {
     public CommentDtoResponse create(@PathVariable Long userId, @PathVariable Long eventId,
                                      @Valid @RequestBody CommentDtoRequest dto) {
         return commentService.create(userId, eventId, dto);
+    }
+
+    @PatchMapping("/{commId}")
+    public CommentDtoResponse update(@PathVariable Long userId, @PathVariable Long eventId, @PathVariable Long commId,
+                                     @Valid @RequestBody CommentDtoRequest dto) {
+        return commentService.update(userId, eventId, commId, dto);
     }
 
 //    @GetMapping

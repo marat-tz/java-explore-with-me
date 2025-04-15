@@ -12,11 +12,13 @@ import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -32,9 +34,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDtoResponse create(Long userId, Long eventId, CommentDtoRequest dto) {
-        log.info("Попытка создать комментарий");
-        log.info("Содержимое поля text: {}", dto.getText());
-
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Событие " + eventId + " не найдено"));
 
@@ -43,6 +42,27 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = commentRepository.save(commentMapper.toEntity(dto, event, user, LocalDateTime.now()));
         return commentMapper.toDto(comment);
+    }
+
+    @Override
+    public CommentDtoResponse update(Long userId, Long eventId, Long commId, CommentDtoRequest dto) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Событие " + eventId + " не найдено");
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("Пользователь " + userId + " не найден"));
+
+        Comment comment = commentRepository.findById(commId).orElseThrow(() ->
+                new NotFoundException("Комментарий " + commId + " не существует"));
+
+        if (!Objects.equals(comment.getUser().getId(), user.getId())) {
+            throw new ConflictException("Пользователь " + userId + " не является создателем комментария");
+        }
+
+        comment.setText(dto.getText());
+
+        return commentMapper.toDto(commentRepository.save(comment));
     }
 
     @Override
