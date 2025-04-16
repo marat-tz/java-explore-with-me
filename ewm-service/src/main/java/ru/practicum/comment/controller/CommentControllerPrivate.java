@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,12 @@ public class CommentControllerPrivate {
     public CommentDtoResponse update(@PathVariable Long userId, @PathVariable Long eventId, @PathVariable Long commId,
                                      @Valid @RequestBody CommentDtoRequest dto) {
         return commentService.update(userId, eventId, commId, dto);
+    }
+
+    @DeleteMapping("/{commId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long userId, @PathVariable Long eventId, @PathVariable Long commId) {
+        commentService.delete(userId, eventId, commId);
     }
 
 //    @GetMapping

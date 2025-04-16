@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.event.model.Event;
 
+import java.util.List;
+
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    List<Comment> findAllByEventId(Long eventId);
+
 }

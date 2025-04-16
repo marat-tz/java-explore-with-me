@@ -18,6 +18,7 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -46,23 +47,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDtoResponse update(Long userId, Long eventId, Long commId, CommentDtoRequest dto) {
-        if (!eventRepository.existsById(eventId)) {
-            throw new NotFoundException("Событие " + eventId + " не найдено");
-        }
-
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("Пользователь " + userId + " не найден"));
-
-        Comment comment = commentRepository.findById(commId).orElseThrow(() ->
-                new NotFoundException("Комментарий " + commId + " не существует"));
-
-        if (!Objects.equals(comment.getUser().getId(), user.getId())) {
-            throw new ConflictException("Пользователь " + userId + " не является создателем комментария");
-        }
-
+        Comment comment = getCommentCheckParams(userId, eventId, commId);
         comment.setText(dto.getText());
 
         return commentMapper.toDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public void delete(Long userId, Long eventId, Long commId) {
+        getCommentCheckParams(userId, eventId, commId);
+        commentRepository.deleteById(commId);
     }
 
     @Override
@@ -71,4 +65,34 @@ public class CommentServiceImpl implements CommentService {
                 new NotFoundException("Комментарий " + commentId + " не найден"));
         return commentMapper.toDto(comment);
     }
+
+    @Override
+    public List<CommentDtoResponse> findCommentsByEventId(Long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Событие " + eventId + " не найдено");
+        }
+
+        List<Comment> comments = commentRepository.findAllByEventId(eventId);
+        return commentMapper.toDto(comments);
+    }
+
+    private Comment getCommentCheckParams(Long userId, Long eventId, Long commId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Событие " + eventId + " не найдено");
+        }
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь " + userId + " не найден");
+        }
+
+        Comment comment = commentRepository.findById(commId).orElseThrow(() ->
+                new NotFoundException("Комментарий " + commId + " не существует"));
+
+        if (!Objects.equals(comment.getUser().getId(), userId)) {
+            throw new ConflictException("Пользователь " + userId + " не является создателем комментария");
+        }
+
+        return comment;
+    }
+
 }
