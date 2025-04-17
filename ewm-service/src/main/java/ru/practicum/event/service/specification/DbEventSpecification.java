@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @UtilityClass
-public class DbSpecifications {
+public class DbEventSpecification {
 
     public Specification<Event> getSpecificationAdmin(List<Integer> users, List<State> states, List<Integer> categories,
                                                        LocalDateTime rangeStart, LocalDateTime rangeEnd) {

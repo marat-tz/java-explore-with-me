@@ -9,8 +9,10 @@ import ru.practicum.event.model.Event;
 import java.util.List;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
 
     List<Comment> findAllByEventId(Long eventId);
+
+    List<Comment> findAllByUserId(Long userId);
 
 }

@@ -4,16 +4,23 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.comment.dto.CommentDtoRequest;
 import ru.practicum.comment.dto.CommentDtoResponse;
 import ru.practicum.comment.mapper.CommentMapper;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
+import ru.practicum.comment.service.specification.DbCommentSpecification;
 import ru.practicum.event.model.Event;
+import ru.practicum.event.model.State;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.event.service.specification.DbEventSpecification;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -37,6 +44,10 @@ public class CommentServiceImpl implements CommentService {
     public CommentDtoResponse create(Long userId, Long eventId, CommentDtoRequest dto) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Событие " + eventId + " не найдено"));
+
+        if (event.getState() != State.PUBLISHED) {
+            throw new ValidationException("Событие " + eventId + " не опубликовано");
+        }
 
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь " + userId + " не найден"));
@@ -74,6 +85,37 @@ public class CommentServiceImpl implements CommentService {
 
         List<Comment> comments = commentRepository.findAllByEventId(eventId);
         return commentMapper.toDto(comments);
+    }
+
+    @Override
+    public List<CommentDtoResponse> findCommentsByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь " + userId + " не найден");
+        }
+
+        List<Comment> comments = commentRepository.findAllByUserId(userId);
+        return commentMapper.toDto(comments);
+    }
+
+    @Override
+    public List<CommentDtoResponse> findCommentsAdmin(List<Integer> users, List<Integer> events,
+                                                      LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                      Integer from, Integer size) {
+
+        Specification<Comment> spec = DbCommentSpecification.getSpecificationAdmin(users, events, rangeStart, rangeEnd);
+
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Comment> comments = commentRepository.findAll(spec, pageable).getContent();
+
+        return commentMapper.toDto(comments);
+    }
+
+    @Override
+    public void deleteCommentAdmin(Long commId) {
+        if (!commentRepository.existsById(commId)) {
+            throw new NotFoundException("Комментарий " + commId + " не существует");
+        }
+        commentRepository.deleteById(commId);
     }
 
     private Comment getCommentCheckParams(Long userId, Long eventId, Long commId) {

@@ -25,7 +25,7 @@ import ru.practicum.event.mapper.UpdateEventMapper;
 import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.repository.LocationRepository;
-import ru.practicum.event.service.specification.DbSpecifications;
+import ru.practicum.event.service.specification.DbEventSpecification;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -85,7 +85,7 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Время начала позже времени окончания");
         }
 
-        Specification<Event> spec = DbSpecifications.getSpecificationPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
+        Specification<Event> spec = DbEventSpecification.getSpecificationPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
 
         EventSort eventSort = sort != null ? EventSort.valueOf(sort.toUpperCase()) : null;
         Sort sorting = Sort.unsorted();
@@ -111,7 +111,7 @@ public class EventServiceImpl implements EventService {
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Integer from, Integer size) {
 
-        Specification<Event> spec = DbSpecifications.getSpecificationAdmin(users, states, categories, rangeStart, rangeEnd);
+        Specification<Event> spec = DbEventSpecification.getSpecificationAdmin(users, states, categories, rangeStart, rangeEnd);
 
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
