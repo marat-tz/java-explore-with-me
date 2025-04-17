@@ -87,12 +87,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDtoResponse> findCommentsByUserId(Long userId) {
+    public List<CommentDtoResponse> findCommentsByUserIdAndEventId(Long userId, Long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Событие " + eventId + " не найдено");
+        }
+
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь " + userId + " не найден");
         }
 
-        List<Comment> comments = commentRepository.findAllByUserId(userId);
+        List<Comment> comments = commentRepository.findAllByUserIdAndEventId(userId, eventId);
         return commentMapper.toDto(comments);
     }
 

@@ -20,7 +20,7 @@ public interface CommentService {
 
     List<CommentDtoResponse> findCommentsByEventId(Long eventId);
 
-    List<CommentDtoResponse> findCommentsByUserId(Long userId);
+    List<CommentDtoResponse> findCommentsByUserIdAndEventId(Long userId, Long eventId);
 
     List<CommentDtoResponse> findCommentsAdmin(List<Integer> users, List<Integer> events, LocalDateTime rangeStart,
                                                LocalDateTime rangeEnd, Integer from, Integer size);

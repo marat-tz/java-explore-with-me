@@ -48,8 +48,9 @@ public class CommentControllerPrivate {
     }
 
     @GetMapping
-    public List<CommentDtoResponse> findCommentsByUserId(@PathVariable Long userId) {
-        return commentService.findCommentsByUserId(userId);
+    public List<CommentDtoResponse> findCommentsByUserIdAndEventId(@PathVariable Long userId,
+                                                                   @PathVariable Long eventId) {
+        return commentService.findCommentsByUserIdAndEventId(userId, eventId);
     }
 
 }
