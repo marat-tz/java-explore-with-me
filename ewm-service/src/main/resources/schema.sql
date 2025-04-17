@@ -76,6 +76,6 @@ CREATE TABLE IF NOT EXISTS comments (
     event_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     text VARCHAR NOT NULL,
-    CONSTRAINT fk_event FOREIGN KEY (user_id) REFERENCES events (id) ON DELETE CASCADE,
+    CONSTRAINT fk_event FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
     CONSTRAINT fk_requester FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
