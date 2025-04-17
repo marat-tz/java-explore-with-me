@@ -4,8 +4,6 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.comment.model.Comment;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.model.State;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

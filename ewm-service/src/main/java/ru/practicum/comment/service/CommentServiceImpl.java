@@ -17,7 +17,6 @@ import ru.practicum.comment.service.specification.DbCommentSpecification;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.State;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.event.service.specification.DbEventSpecification;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
