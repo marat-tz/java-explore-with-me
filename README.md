@@ -1,4 +1,2 @@
-# java-explore-with-me
-Template repository for ExploreWithMe project.
-
-https://github.com/marat-tz/java-explore-with-me/pull/4
+# Search Event
+Приложение для добавления и поиска развлекательных мероприятий. Использован следующий стек: Spring Boot, JPA, Hibernate, Postgres, Docker.
